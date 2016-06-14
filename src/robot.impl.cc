@@ -431,13 +431,7 @@ namespace hpp
 	  }
 	  const Transform3f& T = root->positionInParentFrame ();
 	  double* res = new Transform_;
-	  res [0] = T.getTranslation () [0];
-	  res [1] = T.getTranslation () [1];
-	  res [2] = T.getTranslation () [2];
-	  res [3] = T.getQuatRotation () [0];
-	  res [4] = T.getQuatRotation () [1];
-	  res [5] = T.getQuatRotation () [2];
-	  res [6] = T.getQuatRotation () [3];
+          Transform3fTohppTransform (T, res);
 	  return res;
 	} catch (const std::exception& exc) {
 	  throw Error (exc.what ());
@@ -637,13 +631,7 @@ namespace hpp
 	  }
 	  const Transform3f& T = joint->currentTransformation ();
 	  double* res = new Transform_;
-	  res [0] = T.getTranslation () [0];
-	  res [1] = T.getTranslation () [1];
-	  res [2] = T.getTranslation () [2];
-	  res [3] = T.getQuatRotation () [0];
-	  res [4] = T.getQuatRotation () [1];
-	  res [5] = T.getQuatRotation () [2];
-	  res [6] = T.getQuatRotation () [3];
+          Transform3fTohppTransform (T, res);
 	  return res;
 	} catch (const std::exception& exc) {
 	  throw Error (exc.what ());
@@ -666,13 +654,7 @@ namespace hpp
 	  }
 	  const Transform3f& T = joint->positionInParentFrame ();
 	  double* res = new Transform_;
-	  res [0] = T.getTranslation () [0];
-	  res [1] = T.getTranslation () [1];
-	  res [2] = T.getTranslation () [2];
-	  res [3] = T.getQuatRotation () [0];
-	  res [4] = T.getQuatRotation () [1];
-	  res [5] = T.getQuatRotation () [2];
-	  res [6] = T.getQuatRotation () [3];
+          Transform3fTohppTransform (T, res);
 	  return res;
 	} catch (const std::exception& exc) {
 	  throw Error (exc.what ());
@@ -769,13 +751,7 @@ namespace hpp
 	  Transform3f T = joint->currentTransformation () *
 	    joint->linkInJointFrame ();
 	  double* res = new Transform_;
-	  res [0] = T.getTranslation () [0];
-	  res [1] = T.getTranslation () [1];
-	  res [2] = T.getTranslation () [2];
-	  res [3] = T.getQuatRotation () [0];
-	  res [4] = T.getQuatRotation () [1];
-	  res [5] = T.getQuatRotation () [2];
-	  res [6] = T.getQuatRotation () [3];
+          Transform3fTohppTransform (T, res);
 	  return res;
 	} catch (const std::exception& exc) {
 	  throw Error (exc.what ());

@@ -36,11 +36,12 @@ Transform3fTohppTransform (const hpp::corbaServer::Transform3f& transform,
       config.rot[i*3+j] = R (i,j);
   }
   */
-  for(int i=0; i<4; i++) {
-    config [i+3] = Q [i];
-  }
   for(int i=0; i<3; i++)
     config [i] = T [i];
+  config[3] = Q.w();
+  config[4] = Q.x();
+  config[5] = Q.y();
+  config[6] = Q.z();
 }
 
 hpp::floatSeq* vectorToFloatseq (const hpp::core::vector_t& input)
