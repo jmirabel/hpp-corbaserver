@@ -431,6 +431,22 @@ namespace hpp
         other->addPath(pv);
       }
 
+      // --------------------------------------------------------------
+
+      void Problem::moveRobotToProblem (const char* name) throw (hpp::Error)
+      {
+        ProblemSolverMapPtr_t psMap (server_->problemSolverMap());
+        if (!psMap->has (std::string(name))) throw Error ("No ProblemSolver of this name");
+        core::ProblemSolverPtr_t current = problemSolver(),
+                                 other = psMap->map_[std::string(name)];
+
+        if (current == other)
+          throw Error ("The problem solver specified should be different from "
+              "the current problem solver");
+
+        other->robot(current->robot());
+      }
+
       // ---------------------------------------------------------------
 
       void Problem::setInitialConfig (const hpp::floatSeq& dofArray)

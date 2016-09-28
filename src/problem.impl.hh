@@ -47,6 +47,9 @@ namespace hpp
         virtual void movePathToProblem (UShort pathId, const char* problemName,
             const Names_t& jointNames) throw (hpp::Error);
 
+        virtual void moveRobotToProblem (const char* problemName)
+          throw (hpp::Error);
+
 	virtual void
 	setRandomSeed (const Long seed) throw (hpp::Error) {
           srand ((int) seed);

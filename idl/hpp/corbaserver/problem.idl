@@ -53,6 +53,8 @@ module hpp
     void movePathToProblem (in unsigned short pathId, in string problemName,
         in Names_t jointNames) raises (Error);
 
+    void moveRobotToProblem(in string problemName) raises (Error);
+
     /// \name Initial and goal configurations
     /// \{
 
