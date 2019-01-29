@@ -312,8 +312,9 @@ namespace hpp
 
       // ---------------------------------------------------------------
 
-      Problem::Problem (corbaServer::Server* server)
-	: server_ (server)
+      Problem::Problem (corbaServer::Server* server, std::size_t idxServer)
+	: server_ (server),
+        idxServer_ (idxServer)
       {}
 
       // ---------------------------------------------------------------
@@ -321,6 +322,13 @@ namespace hpp
       void Problem::shutdown ()
       {
         server_->requestShutdown(false);
+      }
+
+      // ---------------------------------------------------------------
+
+      void Problem::addServer (const char* name)
+      {
+        server_->addServer (name);
       }
 
       // ---------------------------------------------------------------
@@ -351,7 +359,7 @@ namespace hpp
 
       core::ProblemSolverPtr_t Problem::problemSolver ()
       {
-        return server_->problemSolver();
+        return server_->problemSolver(idxServer_);
       }
 
       // ---------------------------------------------------------------

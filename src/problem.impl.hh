@@ -35,9 +35,11 @@ namespace hpp
       class Problem : public virtual POA_hpp::corbaserver::Problem
       {
       public:
-	Problem (corbaServer::Server* server);
+	Problem (corbaServer::Server* server, std::size_t idxServer);
 
         virtual void shutdown ();
+
+        virtual void addServer (const char* name);
 
         virtual Names_t* getAvailable (const char* what) throw (hpp::Error);
 
@@ -355,6 +357,7 @@ namespace hpp
         core::ProblemSolverPtr_t problemSolver ();
 	/// \brief Pointer to the Server owning this object
 	corbaServer::Server* server_;
+        std::size_t idxServer_;
       };
     } // end of namespace impl.
   } // end of namespace corbaServer.

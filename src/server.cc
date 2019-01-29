@@ -172,13 +172,24 @@ namespace hpp
 
     void Server::startCorbaServer()
     {
+      startCorbaServer (mainContextId(), 0);
+    }
+
+    void Server::addServer (const std::string& name)
+    {
+      private_->createAndActivateServers(this);
+      startCorbaServer ("hpp" + name, private_->servers_.size()-1);
+    }
+
+    void Server::startCorbaServer(const std::string& context, const std::size_t idx)
+    {
       // Obtain a reference to objects, and register them in
       // the naming service.
-      Object_var robotObj = private_->robotServant_->_this();
-      Object_var obstacleObj = private_->obstacleServant_->_this();
-      Object_var problemObj = private_->problemServant_->_this();
+      Object_var robotObj = private_->servers_[idx].robotServant_->_this();
+      Object_var obstacleObj = private_->servers_[idx].obstacleServant_->_this();
+      Object_var problemObj = private_->servers_[idx].problemServant_->_this();
 
-      private_->createHppContext (mainContextId());
+      private_->createHppContext (context);
       // Bind robotObj with name Robot to the hppContext:
       CosNaming::Name objectName;
       objectName.length(1);
@@ -186,7 +197,7 @@ namespace hpp
       objectName[0].kind = (const char*) "robot"; // string copied
 
       private_->bindObjectToName(robotObj, objectName);
-      private_->robotServant_->_remove_ref();
+      private_->servers_[idx].robotServant_->_remove_ref();
 
       // Bind obstacleObj with name Obstacle to the hppContext:
       objectName.length(1);
@@ -194,7 +205,7 @@ namespace hpp
       objectName[0].kind = (const char*) "obstacle";   // string copied
 
       private_->bindObjectToName(obstacleObj, objectName);
-      private_->obstacleServant_->_remove_ref();
+      private_->servers_[idx].obstacleServant_->_remove_ref();
 
       // Bind problemObj with name Problem to the hppContext:
       objectName.length(1);
@@ -202,15 +213,15 @@ namespace hpp
       objectName[0].kind = (const char*) "problem";   // string copied
 
       private_->bindObjectToName(problemObj, objectName);
-      private_->problemServant_->_remove_ref();
+      private_->servers_[idx].problemServant_->_remove_ref();
 
       PortableServer::POAManager_var pman = private_->poa_->the_POAManager();
       pman->activate();
     }
 
-    core::ProblemSolverPtr_t Server::problemSolver ()
+    core::ProblemSolverPtr_t Server::problemSolver (const std::size_t idx)
     {
-      return problemSolverMap_->selected();
+      return problemSolverMap_->map_[private_->servers_[idx].selectedProblemSolver_];
     }
 
     ProblemSolverMapPtr_t Server::problemSolverMap ()

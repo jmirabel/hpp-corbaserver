@@ -51,7 +51,7 @@ namespace hpp
       class Robot : public virtual POA_hpp::corbaserver::RobotIDL
       {
       public:
-	Robot (corbaServer::Server* server);
+	Robot (corbaServer::Server* server, std::size_t idxServer);
 
 	virtual void
 	createRobot (const char* robotName) throw (hpp::Error);
@@ -270,6 +270,7 @@ namespace hpp
 
 	/// Pointer to the hpp::corbaServer::Server owning this object
 	corbaServer::Server* server_;
+        std::size_t idxServer_;
 
 	/// Pointer to Planner object of hpp::corbaServer::Server.
 	///

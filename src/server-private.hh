@@ -34,24 +34,30 @@ namespace hpp
 	CORBA::ORB_var orb_;
 	PortableServer::POA_var poa_;
 
-	/// \brief Implementation of object hpp::Robot
-	Robot* robotServant_;
-	/// \brief Implementation of object hpp::Obstacle
-	Obstacle* obstacleServant_;
-	/// \brief Implementation of object hpp::Problem.
-	Problem* problemServant_;
+        struct Servers {
+          /// \brief Implementation of object hpp::Robot
+          Robot* robotServant_;
+          /// \brief Implementation of object hpp::Obstacle
+          Obstacle* obstacleServant_;
+          /// \brief Implementation of object hpp::Problem.
+          Problem* problemServant_;
 
-	/// \brief It seems that we need to store this object to
-	/// deactivate the server.
-	PortableServer::ObjectId* robotServantid_;
+          /// \brief It seems that we need to store this object to
+          /// deactivate the server.
+          PortableServer::ObjectId* robotServantid_;
 
-	/// \brief It seems that we need to store this object to
-	/// deactivate the server.
-	PortableServer::ObjectId* obstacleServantid_;
+          /// \brief It seems that we need to store this object to
+          /// deactivate the server.
+          PortableServer::ObjectId* obstacleServantid_;
 
-	/// \brief It seems that we need to store this object to
-	/// deactivate the server.
-	PortableServer::ObjectId* problemServantid_;
+          /// \brief It seems that we need to store this object to
+          /// deactivate the server.
+          PortableServer::ObjectId* problemServantid_;
+
+          std::string selectedProblemSolver_;
+        };
+
+        std::vector<Servers> servers_;
 
 	/// \brief Corba context.
 	CosNaming::NamingContext_var hppContext_;

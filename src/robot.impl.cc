@@ -103,8 +103,9 @@ namespace hpp
 
       // --------------------------------------------------------------------
 
-      Robot::Robot(corbaServer::Server* server) :
-	server_(server)
+      Robot::Robot(corbaServer::Server* server, std::size_t idxServer) :
+	server_(server),
+        idxServer_ (idxServer)
       {
       }
 
@@ -112,7 +113,7 @@ namespace hpp
 
       core::ProblemSolverPtr_t Robot::problemSolver()
       {
-        return server_->problemSolver();
+        return server_->problemSolver(idxServer_);
       }
 
       // --------------------------------------------------------------------

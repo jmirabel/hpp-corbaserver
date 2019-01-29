@@ -21,6 +21,12 @@ def newProblem ():
     cl = Client()
     cl.problem.resetProblem()
 
+def newServer (name):
+    from hpp.corbaserver import Client
+    cl = Client()
+    cl.problem.addServer(name)
+    return Client (postContextId=name)
+
 def _convertToCorbaAny (value):
     import CORBA
     if   isinstance(value, (float)):

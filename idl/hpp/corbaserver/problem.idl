@@ -23,6 +23,8 @@ module hpp
     /// Shutdown the server.
     void shutdown ();
 
+    void addServer (in string name) raises (Error);
+
     /// Set random seed of random number generator
     void setRandomSeed (in long seed) raises (Error);
 

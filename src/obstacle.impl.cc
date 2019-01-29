@@ -35,13 +35,14 @@ namespace hpp
   {
     namespace impl
     {
-      Obstacle::Obstacle (corbaServer::Server* server)
-	: server_ (server)
+      Obstacle::Obstacle (corbaServer::Server* server, std::size_t idxServer)
+	: server_ (server),
+        idxServer_ (idxServer)
       {}
 
       core::ProblemSolverPtr_t Obstacle::problemSolver()
       {
-        return server_->problemSolver();
+        return server_->problemSolver(idxServer_);
       }
 
       void Obstacle::loadObstacleModel (const char* package,

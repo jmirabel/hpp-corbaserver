@@ -38,12 +38,18 @@ namespace hpp
       void
       Server::createAndActivateServers (corbaServer::Server* inServer)
       {
-	robotServant_ = new Robot (inServer);
-	obstacleServant_ = new Obstacle (inServer);
-	problemServant_ = new Problem (inServer);
-	robotServantid_ = poa_->activate_object(robotServant_);
-	obstacleServantid_ = poa_->activate_object(obstacleServant_);
-	problemServantid_ = poa_->activate_object(problemServant_);
+        Servers servers;
+        std::size_t idx = servers_.size();
+
+	servers.robotServant_ = new Robot (inServer, idx);
+	servers.obstacleServant_ = new Obstacle (inServer, idx);
+	servers.problemServant_ = new Problem (inServer, idx);
+	servers.robotServantid_ = poa_->activate_object(servers.robotServant_);
+	servers.obstacleServantid_ = poa_->activate_object(servers.obstacleServant_);
+        servers.problemServantid_ = poa_->activate_object(servers.problemServant_);
+        servers.selectedProblemSolver_ = "default";
+
+        servers_.push_back (servers);
       }
 
       void Server::deactivateAndDestroyServers()

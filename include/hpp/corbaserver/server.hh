@@ -110,7 +110,11 @@ namespace hpp
 
       ProblemSolverMapPtr_t problemSolverMap ();
 
-      core::ProblemSolverPtr_t problemSolver ();
+      core::ProblemSolverPtr_t problemSolver (const std::size_t idx = 0);
+
+      //void selectProblemSolver (const std::string& name);
+
+      void addServer (const std::string& name);
 
     private:
 
@@ -124,6 +128,8 @@ namespace hpp
       void initORBandServers (int argc, const char* argv[], bool multiThread);
 
       void parseArguments (int argc, const char* argv[]);
+
+      void startCorbaServer (const std::string& context, const std::size_t idx);
 
       /// \}
 
