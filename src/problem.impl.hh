@@ -26,6 +26,7 @@ namespace hpp
     namespace impl
     {
       using CORBA::Any;
+      using corbaserver::anySeq;
       using CORBA::Long;
       using CORBA::ULong;
       using CORBA::UShort;
@@ -54,6 +55,8 @@ namespace hpp
         virtual void resetProblem () throw (hpp::Error);
 
         virtual bool loadPlugin (const char* pluginName) throw (hpp::Error);
+
+        virtual Any* runCommand (const char* command, const anySeq& arguments) throw (Error);
 
         virtual void movePathToProblem (ULong pathId, const char* problemName,
             const Names_t& jointNames) throw (hpp::Error);

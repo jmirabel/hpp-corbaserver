@@ -10,4 +10,5 @@ from .client import Client
 from .robot import Robot
 Transform = common_idl._0_hpp.Transform
 from .problem_solver import ProblemSolver, newProblem
+from .commands import Commands
 from .benchmark import Benchmark

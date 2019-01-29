@@ -23,22 +23,23 @@ def newProblem ():
 
 def _convertToCorbaAny (value):
     import CORBA
-    t = type(value)
-    if t is float:
+    if   isinstance(value, (float)):
         return CORBA.Any(CORBA.TC_double, value)
-    elif t is int:
+    elif isinstance(value, (long, int)):
         return CORBA.Any(CORBA.TC_longlong, value)
-    elif t is bool:
+    elif isinstance(value, bool):
         return CORBA.Any(CORBA.TC_boolean, value)
-    elif t is str:
+    elif isinstance(value, str):
         return CORBA.Any(CORBA.TC_string, value)
     elif isinstance (value, (list, tuple)):
         if isinstance (value[0], (list, tuple)):
             return CORBA.Any(CORBA.TypeCode("IDL:hpp/floatSeqSeq:1.0"), value)
         else:
             return CORBA.Any(CORBA.TypeCode("IDL:hpp/floatSeq:1.0"), value)
-    else: # Assume value is already a CORBA.Any
+    elif isinstance(value, CORBA.Any):
         return value
+    else:
+        raise ValueError ("Convertion to CORBA.Any failed.")
 
 ## Definition of a path planning problem
 #

@@ -127,7 +127,7 @@ FOREACH (FILE __init__.py quaternion.py transform.py)
     )
 ENDFOREACH ()
 
-FOREACH (FILE __init__.py client.py robot.py  problem_solver.py benchmark.py ompl_benchmark_statistics.py)
+FOREACH (FILE __init__.py client.py robot.py  problem_solver.py commands.py benchmark.py ompl_benchmark_statistics.py)
   # Create a symbolic link of FILE into the build directory
   # This is for testing purpose
   EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E ${LINK}

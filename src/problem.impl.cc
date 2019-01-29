@@ -17,6 +17,7 @@
 #include <boost/icl/interval_set.hpp>
 
 #include <hpp/util/debug.hh>
+#include <hpp/util/exception-factory.hh>
 #include <hpp/util/portability.hh>
 
 #include <hpp/fcl/shape/geometric_shapes.h>
@@ -213,6 +214,8 @@ namespace hpp
             static CORBA::Any toCorbaAny (const Parameter& p) {
               CORBA::Any out;
               switch (p.type()) {
+                case Parameter::NONE:
+                  break;
                 case Parameter::BOOL:
                   out <<= p.boolValue();
                   break;
@@ -382,6 +385,7 @@ namespace hpp
         _CASE_PS_MAP ("NumericalConstraint" , numericalConstraints)
         _CASE_PS_MAP ("LockedJoint"         , lockedJoints)
         _CASE_PS_MAP ("CenterOfMass"        , centerOfMassComputations)
+        _CASE_PS_MAP ("Command"             , commands)
         _CASE_SET_RET ("Problem", server_->problemSolverMap()->keys <Ret_t> ())
         _CASE_SET_RET ("Parameter", problem(problemSolver())->parameters.getKeys <Ret_t> ())
         _CASE_SET_RET ("DefaultParameter", problem(problemSolver())->parameterDescriptions().getKeys <Ret_t> ())
@@ -522,6 +526,31 @@ namespace hpp
           return core::plugin::loadPlugin (libname, ps);
         } catch (std::exception& exc) {
           throw Error (exc.what ());
+        }
+      }
+
+      // ---------------------------------------------------------------
+
+      Any* Problem::runCommand (const char* _command, const anySeq& arguments)
+        throw (Error)
+      {
+        try {
+          core::ProblemSolverPtr_t ps = problemSolver();
+          std::string command = _command;
+          if (!ps->commands.has (command)) {
+            HPP_THROW (Error, "Command " << command << " not found.");
+          }
+          core::CommandPtr_t cmd = ps->commands.get(command);
+          std::vector <Parameter> args (arguments.length());
+          for (std::size_t i = 0; i < args.size (); ++i)
+            args[i] = Parameter_CorbaAny::toParameter (arguments[(ULong)i]);
+          cmd->setParameterValues (args);
+          Parameter ret = cmd->execute (ps);
+          CORBA::Any* ap = new CORBA::Any;
+          *ap = Parameter_CorbaAny::toCorbaAny(ret);
+          return ap;
+        } catch (const std::exception& e) {
+          throw hpp::Error (e.what ());
         }
       }
 
