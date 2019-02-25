@@ -34,19 +34,17 @@ namespace hpp
                 CorbaInit init = CorbaInit.GetInit();
                 NamingContext nameService = init.GetNameService(nameServiceHost, nameServicePort);
 
-                NameComponent[] nRobot = new NameComponent[] { new NameComponent("hpp"+context, "corbaserver"), new NameComponent("basic", "robot") };
-                robot = (hpp.corbaserver.RobotIDL)nameService.resolve(nRobot);
-                NameComponent[] nProblem = new NameComponent[] { new NameComponent("hpp" + context, "corbaserver"), new NameComponent("basic", "problem") };
-                problem = (hpp.corbaserver.Problem)nameService.resolve(nProblem);
-                NameComponent[] nObstacle = new NameComponent[] { new NameComponent("hpp" + context, "corbaserver"), new NameComponent("basic", "obstacle") };
-                obstacle = (hpp.corbaserver.Obstacle)nameService.resolve(nObstacle);
+                NameComponent hppName = new NameComponent("hpp" + context, "corbaserver");
+                robot    = (RobotIDL)nameService.resolve(new NameComponent[] { hppName, new NameComponent("basic", "robot"   ) });
+                problem  = (Problem) nameService.resolve(new NameComponent[] { hppName, new NameComponent("basic", "problem" ) });
+                obstacle = (Obstacle)nameService.resolve(new NameComponent[] { hppName, new NameComponent("basic", "obstacle") });
             }
 
             private IiopClientChannel channel;
 
-            public hpp.corbaserver.RobotIDL robot;
-            public hpp.corbaserver.Problem  problem;
-            public hpp.corbaserver.Obstacle obstacle;
+            public RobotIDL robot;
+            public Problem problem;
+            public Obstacle obstacle;
         };
 
     }
