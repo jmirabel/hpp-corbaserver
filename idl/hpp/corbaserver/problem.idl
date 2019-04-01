@@ -271,6 +271,9 @@ module hpp
      in string comRootJointName)
       raises (Error);
 
+    void createTorqueLimitConstraint (in string constraintName)
+      raises (Error);
+
     /// Create position constraint between two joints
     ///
     /// \param constraintName name of the constraint created,

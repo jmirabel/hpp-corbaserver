@@ -59,6 +59,7 @@
 #ifdef HPP_CONSTRAINTS_USE_QPOASES
 # include <hpp/constraints/static-stability.hh>
 #endif
+#include <hpp/constraints/static-torque.hh>
 #include <hpp/constraints/configuration-constraint.hh>
 #include <hpp/corbaserver/server.hh>
 #include <hpp/corbaserver/server-plugin.hh>
@@ -1040,6 +1041,22 @@ namespace hpp
 	throw hpp::Error ("Not implemented");
       }
 #endif
+
+      // ---------------------------------------------------------------
+
+      void Problem::createTorqueLimitConstraint (const char* constraintName)
+        throw (hpp::Error)
+      {
+        try {
+          std::string name (constraintName);
+          core::ProblemSolverPtr_t ps = problemSolver();
+          DevicePtr_t robot = getRobotOrThrow (ps);
+          ImplicitPtr_t tl = hpp::constraints::torqueLimits (robot, name);
+          ps->numericalConstraints.add (name, tl);
+        } catch (const std::exception& exc) {
+          throw hpp::Error (exc.what ());
+        }
+      }
 
       // ---------------------------------------------------------------
 

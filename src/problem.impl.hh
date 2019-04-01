@@ -148,6 +148,9 @@ namespace hpp
             const char* comRootJointName)
           throw (hpp::Error);
 
+        void createTorqueLimitConstraint (const char* constraintName)
+          throw (hpp::Error);
+
 	virtual void createPositionConstraint (const char* constraintName,
 					       const char* joint1Name,
 					       const char* joint2Name,
