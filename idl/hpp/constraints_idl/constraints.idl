@@ -37,6 +37,11 @@ module hpp
       string str () raises (Error);
   };
 
+  interface DistanceBetweenBodies : DifferentiableFunction
+  {
+      void setExponentialDecrease (in value_type epsilon, in value_type dist0) raises (Error);
+  };
+
   interface Implicit
   {
     DifferentiableFunction function () raises (Error);
@@ -61,6 +66,7 @@ module hpp
   }; // module core
 }; // module hpp
 //* #include <hpp/constraints/differentiable-function.hh>
+//* #include <hpp/constraints/distance-between-bodies.hh>
 //* #include <hpp/constraints/implicit.hh>
 
 #endif // HPP_CORE_PATHS_IDL
