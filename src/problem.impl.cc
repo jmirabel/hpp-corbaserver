@@ -21,6 +21,9 @@
 
 #include <hpp/fcl/shape/geometric_shapes.h>
 
+#include <pinocchio/multibody/model.hpp>
+#include <pinocchio/multibody/geometry.hpp>
+
 #include <hpp/pinocchio/configuration.hh>
 
 #include <hpp/core/config-projector.hh>
@@ -1114,15 +1117,36 @@ namespace hpp
       {
 	if (!problemSolver()->robot ()) throw hpp::Error ("No robot loaded");
 	try {
-	  JointPtr_t joint1 = problemSolver()->robot ()->getJointByName
-	    (joint1Name);
-	  JointPtr_t joint2 = problemSolver()->robot ()->getJointByName
-	    (joint2Name);
-	  std::string name (constraintName);
-	  problemSolver()->addNumericalConstraint
-	    (name, Implicit::create
-	     (DistanceBetweenBodies::create (name, problemSolver()->robot(),
-					     joint1, joint2)));
+          core::ProblemSolverPtr_t ps = problemSolver();
+          DevicePtr_t robot = getRobotOrThrow (ps);
+
+	  std::string name (constraintName),
+            j1name (joint1Name), j2name (joint2Name);
+
+          const hpp::pinocchio::Model& model = robot->model();
+          const hpp::pinocchio::GeomModel& geomModel = robot->geomModel();
+          if (model.existJointName (j1name) && model.existJointName (j2name)) {
+            JointPtr_t joint1 = robot->getJointByName (j1name);
+            JointPtr_t joint2 = robot->getJointByName (j2name);
+            ps->addNumericalConstraint
+              (name, Implicit::create
+               (DistanceBetweenBodies::create (name, robot, joint1, joint2)));
+          } else if (geomModel.existGeometryName (j1name) &&
+                     geomModel.existGeometryName (j2name)) {
+            ::pinocchio::CollisionPair cp (geomModel.getGeometryId(j1name),
+                                           geomModel.getGeometryId(j2name));
+            pinocchio::GeomIndex gi = geomModel.findCollisionPair (cp);
+            if (gi >= geomModel.collisionPairs.size()) {
+              HPP_THROW(Error, "Could not find collision pair between " <<
+                  j1name << " and " << j2name);
+            }
+            ps->addNumericalConstraint
+              (name, Implicit::create
+               (DistanceBetweenBodies::create (name, robot, gi)));
+          } else {
+              HPP_THROW(Error, "The provided names (" << j1name << " and "
+                << j2name << ") do not correspond both to joints or to geometries.");
+          }
 	} catch (const std::exception& exc) {
 	  throw Error (exc.what ());
 	}
