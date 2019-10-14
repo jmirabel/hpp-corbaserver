@@ -386,6 +386,7 @@ class BuildInterfaceImplementations(Builder):
         for c in allCallables:
             comments = c.comments()
             hpp_opname = None
+            hpp_static_func = False
             comments_impl = []
             for comment in comments:
                 if comment.text().startswith("// ") or comment.text().startswith("///"):
@@ -395,9 +396,14 @@ class BuildInterfaceImplementations(Builder):
                     if not comments_impl:
                         comments_impl.append (" // generated from {}:{}\n".format(node.file(), node.line()))
                     comments_impl.append (comment.text()[3:])
-                elif comment.text().startswith("//->"):
-                    if hpp_opname is not None: raise makeError("Function was already renamed", comment.file(), comment.line())
-                    hpp_opname = comment.text()[4:].strip()
+                elif comment.text().startswith("//-"):
+                    if comment.text()[3] == '>': # Lines starting with "//->"
+                        if hpp_opname is not None: raise makeError("Function was already renamed", comment.file(), comment.line())
+                        hpp_opname = comment.text()[4:].strip()
+                    elif comment.text()[3:].startswith("static:"): # Lines starting with "//-static"
+                        hpp_static_func = True
+                        if hpp_opname is not None: raise makeError("Function was already renamed", comment.file(), comment.line())
+                        hpp_opname = comment.text()[len("//-static:"):].strip()
 
             if isinstance(c, idlast.Attribute):
                 attrType = types.Type(c.attrType())
@@ -416,17 +422,31 @@ class BuildInterfaceImplementations(Builder):
                                 arg_defs = inType + " _" + attribname)
 
                         tmpVar, in_conv, out_conv = self.argConversion ("_" + attribname, attrType, True, False, c)
-                        implementations.out (template.operation_impl_code,
-                                return_type = "void",
-                                impl_tpl_name = impl_tpl_name,
-                                opname = attribname,
-                                hpp_opname = hpp_opname if hpp_opname else attribname,
-                                arg_defs = inType + " _" + attribname,
-                                in_conversions = in_conv if in_conv else "",
-                                out_conversions = out_conv if out_conv else "",
-                                store_return = "",
-                                do_return = "",
-                                arg_calls = tmpVar)
+                        if hpp_static_func:
+                            implementations.out (template.operation_impl_code,
+                                    return_type = "void",
+                                    impl_tpl_name = impl_tpl_name,
+                                    opname = attribname,
+                                    hpp_opname = hpp_opname if hpp_opname else attribname,
+                                    arg_defs = inType + " _" + attribname,
+                                    in_conversions = in_conv if in_conv else "",
+                                    out_conversions = out_conv if out_conv else "",
+                                    store_return = "",
+                                    do_return = "",
+                                    arg_calls = tmpVar,
+                                    comma = ", " if len(tmpVar.strip()) > 0 else "")
+                        else:
+                            implementations.out (template.operation_impl_code,
+                                    return_type = "void",
+                                    impl_tpl_name = impl_tpl_name,
+                                    opname = attribname,
+                                    hpp_opname = hpp_opname if hpp_opname else attribname,
+                                    arg_defs = inType + " _" + attribname,
+                                    in_conversions = in_conv if in_conv else "",
+                                    out_conversions = out_conv if out_conv else "",
+                                    store_return = "",
+                                    do_return = "",
+                                    arg_calls = tmpVar)
 
                     declarations.out (template.operation_decl_code,
                             return_type = returnType,

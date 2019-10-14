@@ -132,20 +132,25 @@ operation_decl_code = """
 @return_type@ @opname@ (@arg_defs@);
 """
 
-operation_impl_code = """
+_operation_impl_code_tpl = """
 template <typename _Base, typename _Storage>
 @return_type@ @impl_tpl_name@<_Base, _Storage>::@opname@ (@arg_defs@)
-{
-  try {
+{{
+  try {{
     // automatically generated code.
     @in_conversions@
-    @store_return@ (getT()->@hpp_opname@ (@arg_calls@));
+    @store_return@ ({call});
     @out_conversions@
     @do_return@
-  } catch (const std::exception& e) {
+  }} catch (const std::exception& e) {{
     throw ::hpp::Error (e.what());
-  }
-}"""
+  }}
+}}"""
+
+operation_impl_code = _operation_impl_code_tpl.format (
+        call = "getT()->@hpp_opname@ (@arg_calls@)")
+operation_static_impl_code = _operation_impl_code_tpl.format (
+        call = "@hpp_opname@ (getT()@comma@@arg_calls@)")
 
 provided_operation_impl_code = """
 template <typename _Base, typename _Storage>
