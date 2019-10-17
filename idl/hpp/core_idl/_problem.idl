@@ -24,6 +24,7 @@ module hpp
   interface PathValidation;
   interface ConfigurationShooter;
   interface Constraint;
+  interface Discretization;
 
   interface Problem
   {
@@ -55,6 +56,13 @@ module hpp
     //-> configurationShooter
     void setConfigurationShooter (in ConfigurationShooter d) raises (Error);
     //-> configurationShooter
+
+    Discretization getDiscretization () raises (Error);
+    //* core::DiscretizationPtr_t d =
+    //*   core::Discretization::create (get()->robot());
+    //*
+    //* return makeServant<hpp::core_idl::Discretization_ptr>
+    //*   (server_, new Discretization (server_, d));
   }; // interface Problem
 
   }; // module core
@@ -62,15 +70,18 @@ module hpp
 
 //* #include <hpp/core/problem.hh>
 //* #include <hpp/pinocchio_idl/robots.hh>
+//* #include <hpp/corbaserver/discretization.hh>
 //* #include <hpp/core_idl/distances.hh>
 //* #include <hpp/core_idl/steering_methods.hh>
 //* #include <hpp/core_idl/path_validations.hh>
 //* #include <hpp/core_idl/configuration_shooters.hh>
+//* #include <hpp/core_idl/paths.hh>
 
 #include <hpp/pinocchio_idl/robots.idl>
 #include <hpp/core_idl/distances.idl>
 #include <hpp/core_idl/steering_methods.idl>
 #include <hpp/core_idl/path_validations.idl>
 #include <hpp/core_idl/configuration_shooters.idl>
+#include <hpp/core_idl/paths.idl>
 
 #endif // HPP_CORE_PROBLEM_IDL

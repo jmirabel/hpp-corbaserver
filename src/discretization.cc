@@ -25,12 +25,16 @@ namespace hpp {
 
     void Discretization::compute (value_type time)
     {
+      if (!path_)
+        throw std::logic_error ("Path is not set");
       HPP_START_TIMECOUNTER(discretization);
 
       q_.resize(device_->configSize());
       v_.resize(device_->numberDof ());
 
       bool success = path_->eval (q_, time);
+      if (!success)
+        throw std::runtime_error ("Could not evaluate the path");
       path_->derivative (v_, time, 1);
 
       pinocchio::DeviceSync device (device_);

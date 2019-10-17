@@ -1,3 +1,6 @@
+#ifndef HPP_CORE_DISCRETIZATION_HH
+#define HPP_CORE_DISCRETIZATION_HH
+
 #include <hpp/util/pointer.hh>
 #include <hpp/pinocchio/device.hh>
 #include <hpp/constraints/matrix-view.hh>
@@ -17,9 +20,9 @@ namespace hpp {
           , PositionAndDerivative = Position | Derivative
         };
 
-        static DiscretizationPtr_t create (const PathPtr_t path, const DevicePtr_t device)
+        static DiscretizationPtr_t create (const DevicePtr_t device)
         {
-          DiscretizationPtr_t ptr (new Discretization(path, device));
+          DiscretizationPtr_t ptr (new Discretization(device));
           ptr->init(ptr);
           return ptr;
         }
@@ -44,9 +47,14 @@ namespace hpp {
         /// \throw std::runtime_error if a joint is not found in the model.
         void setJointNames (const std::vector<std::string>& names);
 
+        void path (const PathPtr_t& path)
+        {
+          path_ = path;
+        }
+
       private:
-        Discretization (const PathPtr_t path, const DevicePtr_t device)
-          : path_ (path), device_ (device)
+        Discretization (const DevicePtr_t device)
+          : device_ (device)
         {}
 
         void init (const DiscretizationWkPtr_t)
@@ -78,3 +86,5 @@ namespace hpp {
     };
   } // namespace core
 } // namespace hpp
+
+#endif // HPP_CORE_DISCRETIZATION_HH
