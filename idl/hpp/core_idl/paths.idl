@@ -11,12 +11,30 @@
 #ifndef HPP_CORE_PATHS_IDL
 #define HPP_CORE_PATHS_IDL
 #include <hpp/common.idl>
+#include <hpp/pinocchio_idl/robots.idl>
 
 module hpp
 {
+  module pinocchio_idl
+  {
+    interface CenterOfMassComputation;
+    interface Device;
+  }; // module pinocchio_idl
+
   module core_idl {
   typedef unsigned long long size_t;
   interface PathVector;
+
+  interface Discretization
+  {
+    const long Position              = 1;
+    const long Derivative            = 2;
+    const long PositionAndDerivative = 3;
+    void    compute (in value_type time) raises (Error);
+    boolean addCenterOfMass (in pinocchio_idl::CenterOfMassComputation time, in long option) raises (Error);
+    boolean addOperationalFrame (in string name, in long option) raises (Error);
+    void    setJointNames (in Names_t names) raises (Error);
+  }; // interface Discretization
 
   interface Path
   {
@@ -57,6 +75,14 @@ module hpp
     //*   (server_, new PathVector (server_, pv));
 
     Path reverse () raises (Error);
+
+    Discretization getDiscretization (in pinocchio_idl::Device robot) raises (Error);
+    //* pinocchio::DevicePtr_t _robot = reference_to_servant_base<pinocchio::Device>(server_, robot)->get();
+    //* core::DiscretizationPtr_t d =
+    //*   core::Discretization::create (get(), _robot);
+    //*
+    //* return makeServant<hpp::core_idl::Discretization_ptr>
+    //*   (server_, new Discretization (server_, d));
   }; // interface Path
 
   interface PathVector : Path {
@@ -73,5 +99,6 @@ module hpp
 }; // module hpp
 //* #include <hpp/core/path.hh>
 //* #include <hpp/core/path-vector.hh>
+//* #include <hpp/corbaserver/discretization.hh>
 
 #endif // HPP_CORE_PATHS_IDL

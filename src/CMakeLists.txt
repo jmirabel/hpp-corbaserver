@@ -168,6 +168,7 @@ IF (NOT CLIENT_ONLY)
     tools.cc
     tools.hh
     conversions.cc
+    discretization.cc
 
     ${ALL_IDL_CPP_STUBS}
     ${ALL_IDL_CPP_IMPL_STUBS}

@@ -47,6 +47,8 @@ IF (NOT CLIENT_ONLY)
     include/hpp/corbaserver/server-plugin.hh
     include/hpp/corbaserver/conversions.hh
 
+    include/hpp/corbaserver/discretization.hh
+
     ${${PROJECT_NAME}_HEADERS}
     )
 ENDIF (NOT CLIENT_ONLY)
