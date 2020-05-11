@@ -24,6 +24,7 @@
 #include <hpp/fcl/shape/geometric_shapes.h>
 
 #include <hpp/pinocchio/configuration.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 
 #include <hpp/core/config-projector.hh>
 #include <hpp/core/config-validations.hh>
@@ -49,6 +50,7 @@
 #include <hpp/constraints/affine-function.hh>
 #include <hpp/constraints/differentiable-function.hh>
 #include <hpp/constraints/distance-between-bodies.hh>
+#include <hpp/constraints/explicit/relative-pose.hh>
 #include <hpp/constraints/relative-com.hh>
 #include <hpp/constraints/com-between-feet.hh>
 #include <hpp/constraints/generic-transformation.hh>
@@ -233,6 +235,41 @@ namespace hpp
 
         typedef hpp::core::segment_t segment_t;
         typedef hpp::core::segments_t segments_t;
+
+        ImplicitPtr_t buildExplicitPose(const DevicePtr_t& robot,
+              const std::string& name,
+              const std::string& nameF1, const std::string& nameF2,
+              const Transform3f& M1,     const Transform3f& M2,
+              const std::vector<bool> mask)
+          {
+            if (!(mask[0] && mask[1] && mask[2] && mask[3] && mask[4] && mask[5]))
+              return ImplicitPtr_t();
+            if (nameF2.empty())
+              return ImplicitPtr_t();
+
+            JointPtr_t joint1, joint2;
+            Transform3f ref1 = M1, ref2 = M2;
+            if (!nameF1.empty())
+            {
+              Frame frame = robot->getFrameByName(nameF1);
+              ref1 = frame.positionInParentJoint() * M1;
+              joint1 = frame.joint();
+            }
+            {
+              Frame frame = robot->getFrameByName(nameF2);
+              ref2 = frame.positionInParentJoint() * M2;
+              joint2 = frame.joint();
+            }
+
+            // Check that it is possible to build an explicit pose constraint.
+            if (joint2->parentJoint() || joint2->jointModel().shortname() !=
+                ::pinocchio::JointModelFreeFlyer::classname())
+              return ImplicitPtr_t();
+
+            return constraints::explicit_::RelativePose::create (name, robot,
+                joint1, joint2, ref1, ref2, mask,
+                constraints::ComparisonTypes_t (6, constraints::EqualToZero));
+          }
 
         template <int PositionOrientationFlag> DifferentiableFunctionPtr_t
           buildGenericFunc(const DevicePtr_t& robot,
@@ -707,17 +744,28 @@ namespace hpp
        const hpp::boolSeq& mask)
       {
         try {
-	if (!problemSolver()->robot ()) throw hpp::Error ("No robot loaded");
-        std::string name (constraintName);
-        DifferentiableFunctionPtr_t func = buildGenericFunc
-          <constraints::OutputSE3Bit | constraints::PositionBit | constraints::OrientationBit> (
-              problemSolver()->robot(), name,
-              joint1Name           , joint2Name,
-              toTransform3f(frame1), toTransform3f(frame2),
-              boolSeqToVector(mask, 6));
+          DevicePtr_t robot = getRobotOrThrow (problemSolver());
+          Transform3f oM1 (toTransform3f(frame1)),
+                      oM2 (toTransform3f(frame2));
+          std::vector<bool> _mask (boolSeqToVector(mask, 6));
 
-        problemSolver()->addNumericalConstraint
-          (name, Implicit::create (func));
+          std::string name (constraintName);
+          ImplicitPtr_t implicit
+            //= buildExplicitPose (robot, name, joint1Name,
+              //joint2Name, oM1, oM2, _mask);
+             ;
+
+          if (!implicit) {
+            DifferentiableFunctionPtr_t func = buildGenericFunc
+              <constraints::OutputSE3Bit | constraints::PositionBit | constraints::OrientationBit> (
+                  problemSolver()->robot(), name,
+                  joint1Name           , joint2Name,
+                  toTransform3f(frame1), toTransform3f(frame2),
+                  boolSeqToVector(mask, 6));
+            implicit = Implicit::create (func);
+          }
+
+          problemSolver()->addNumericalConstraint (name, implicit);
 	} catch (const std::exception& exc) {
 	  throw hpp::Error (exc.what ());
 	}
