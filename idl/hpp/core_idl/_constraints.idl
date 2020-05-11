@@ -66,6 +66,11 @@ module hpp
 
     boolean getLastIsOptional ();
     //-> lastIsOptional
+
+    void setGain (in size_type priority, in value_type gain) raises (Error);
+
+    value_type getGain (in size_type priority) raises (Error);
+    //* return getT()->solver().gain (priority);
   }; // interface ConfigProjector
 
   interface ConstraintSet : Constraint
