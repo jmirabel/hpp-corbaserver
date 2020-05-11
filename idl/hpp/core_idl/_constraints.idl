@@ -67,6 +67,15 @@ module hpp
     boolean getLastIsOptional ();
     //-> lastIsOptional
 
+    void computeValueAndJacobian (in floatSeq config, out floatSeq value,
+                                  out floatSeqSeq jacobian) raises (Error);
+    //* hpp::core::vector_t _config = hpp::corbaServer::floatSeqToVector (config);
+    //* hpp::core::vector_t _value (getT()->solver().reducedDimension());
+    //* hpp::core::matrix_t _jacobian (getT()->solver().reducedDimension(), getT()->numberFreeVariables());
+    //* (getT()->computeValueAndJacobian (_config, _value, _jacobian));
+    //* value = hpp::corbaServer::vectorToFloatSeq (_value);
+    //* jacobian = hpp::corbaServer::matrixToFloatSeqSeq (_jacobian);
+
     void setGain (in size_type priority, in value_type gain) raises (Error);
 
     value_type getGain (in size_type priority) raises (Error);
