@@ -331,6 +331,10 @@ module hpp
     (in string constraintName, in string joint1Name, in Names_t objects,
      in double distance) raises (Error);
 
+    /// Create a collision avoidance constraints for convex shapes.
+    /// \param name of the constraint created,
+    void createConvexCollisionAvoidance (in string name) raises (Error);
+
     /// Create identity constraint between several joints.
     ///
     /// \param constraintName name of the constraint created,

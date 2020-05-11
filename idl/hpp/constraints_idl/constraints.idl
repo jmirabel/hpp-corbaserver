@@ -73,11 +73,18 @@ module hpp
     //* return vectorToFloatSeq(getT()->goal().vector());
   }; // interface ConfigurationConstraint
 
+  interface ConvexCollisionAvoidance : DifferentiableFunction
+  {
+    void addCollisionPair (in string geom1, in string geom2,
+        in value_type distanceUpperBound, in value_type precision) raises (Error);
+  }; // interface ConvexCollisionAvoidance
+
   }; // module core
 }; // module hpp
 //* #include <hpp/constraints/differentiable-function.hh>
 //* #include <hpp/constraints/implicit.hh>
 //* #include <hpp/constraints/locked-joint.hh>
+//* #include <hpp/constraints/convex-collision-avoidance.hh>
 //* #include <hpp/constraints/configuration-constraint.hh>
 
 #endif // HPP_CORE_PATHS_IDL

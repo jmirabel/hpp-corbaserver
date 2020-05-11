@@ -159,6 +159,8 @@ namespace hpp
 	(const char* constraintName, const char* joint1Name,
 	 const hpp::Names_t& objects, Double distance);
 
+        virtual void createConvexCollisionAvoidance (const char* name);
+
         virtual void createIdentityConstraint
         (const char* constraintName, const Names_t& inJoints,
          const hpp::Names_t& outJoints);

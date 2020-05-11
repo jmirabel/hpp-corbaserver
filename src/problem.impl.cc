@@ -53,6 +53,7 @@
 #include <hpp/constraints/com-between-feet.hh>
 #include <hpp/constraints/generic-transformation.hh>
 #include <hpp/constraints/convex-shape-contact.hh>
+#include <hpp/constraints/convex-collision-avoidance.hh>
 #include <hpp/constraints/implicit.hh>
 #include <hpp/constraints/locked-joint.hh>
 #include <hpp/constraints/symbolic-calculus.hh>
@@ -1136,6 +1137,23 @@ namespace hpp
 	    (name, Implicit::create
 	     (DistanceBetweenBodies::create (name, problemSolver()->robot(),
 					     joint1, objectList)));
+	} catch (const std::exception& exc) {
+	  throw Error (exc.what ());
+	}
+      }
+
+      // ---------------------------------------------------------------
+
+      void Problem::createConvexCollisionAvoidance (const char* _name)
+      {
+        DevicePtr_t robot = getRobotOrThrow (problemSolver());
+	try {
+	  std::string name (_name);
+          constraints::ConvexCollisionAvoidancePtr_t cca =
+                constraints::ConvexCollisionAvoidance::create (name, robot);
+          cca->addObstacleModel(problemSolver()->obstacleGeomModel(),
+                                problemSolver()->obstacleGeomData());
+	  problemSolver()->addNumericalConstraint (name, Implicit::create (cca));
 	} catch (const std::exception& exc) {
 	  throw Error (exc.what ());
 	}
